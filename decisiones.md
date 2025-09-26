@@ -57,7 +57,7 @@ Implementé una CI en **Azure DevOps Pipelines** (YAML) para un **monorepo** con
 
 **Evidencia:**  
 ![Agente online](./docs/agente-online.png)
-
+![Azure Pipelines](./docs/azure-pipelines.png)
 ---
 
 ## 5. Ejecuciones de CI
