@@ -127,117 +127,31 @@ cd back && npm run start
 - **Puerto**: 3001
 - **Build Output**: `back/dist/`
 
-## 🚀 CI/CD
+## CI/CD con Azure DevOps
 
-Este proyecto está optimizado para pipelines de CI/CD:
+Este proyecto está integrado con **Azure DevOps Pipelines** usando un pipeline YAML.
 
-### Ejemplo de Pipeline
+- **Archivo**: `azure-pipelines.yml` en la raíz.
+- **Pool**: `SelfHosted` → corre en mi propio agente local.
+- **Jobs**:
+  - `Build Frontend`: instala dependencias de `front`, corre `npm run build` y publica `front-dist`.
+  - `Build Backend`: instala dependencias de `back`, corre `npm run build` y publica `back-dist`.
 
-\`\`\`yaml
-# .github/workflows/deploy.yml
-name: Build and Deploy
+### Artefactos
+En cada ejecución se generan artefactos descargables:
+- `front-dist/`
+- `back-dist/`
 
-on:
-  push:
-    branches: [ main ]
+Se pueden ver en la pestaña **Artifacts** de la run en Azure DevOps.
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-    
-    - name: Install dependencies
-      run: node scripts/install-all.js
-    
-    - name: Build projects
-      run: node scripts/build-monorepo.js
-    
-    - name: Deploy
-      # Aquí van los pasos de deploy
-      run: echo "Deploy to production"
-\`\`\`
+### Cómo verlo correr
+1. Ir a *Pipelines → Pipelines* en Azure DevOps.
+2. Seleccionar el pipeline `TP04-Pipelines`.
+3. Ejecutar una run.
+4. Ver logs de **Build Frontend** y **Build Backend**.
+5. Revisar pestaña **Artifacts** para confirmar que se publicaron `front-dist` y `back-dist`.
 
-### Comandos para CI/CD
+### Prerrequisitos del agente
+- Tener instalado el **Azure DevOps Agent** en la máquina local.
+- Estar registrado en el pool `SelfHosted` y en estado **Online**.
 
-\`\`\`bash
-# Instalar dependencias
-node scripts/install-all.js
-
-# Build completo
-node scripts/build-monorepo.js
-
-# Los archivos de producción estarán en:
-# - front/dist/ (archivos estáticos)
-# - back/dist/ (código del servidor)
-\`\`\`
-
-## 📦 Dependencias Principales
-
-### Frontend
-- React 18.2.0
-- Vite 5.2.0
-- @vitejs/plugin-react 4.2.1
-
-### Backend
-- Express 4.18.2
-- CORS 2.8.5
-- fs-extra 11.1.1 (para build)
-
-## 🛠️ Desarrollo
-
-### Agregar nuevas dependencias
-
-\`\`\`bash
-# Frontend
-cd front && npm install nueva-dependencia
-
-# Backend
-cd back && npm install nueva-dependencia
-\`\`\`
-
-### Estructura de archivos recomendada
-
-\`\`\`
-front/src/
-├── components/     # Componentes React
-├── pages/         # Páginas/rutas
-├── hooks/         # Custom hooks
-├── utils/         # Utilidades
-└── styles/        # Estilos CSS
-
-back/src/
-├── routes/        # Rutas de Express
-├── middleware/    # Middlewares
-├── controllers/   # Controladores
-├── models/        # Modelos de datos
-└── utils/         # Utilidades
-\`\`\`
-
-## 🐛 Troubleshooting
-
-### Problemas comunes
-
-1. **Puerto ocupado**: Cambiar puertos en `vite.config.js` (frontend) o `src/index.js` (backend)
-2. **CORS errors**: Verificar configuración de CORS en `back/src/index.js`
-3. **Build fails**: Verificar que todas las dependencias estén instaladas
-
-### Logs útiles
-
-\`\`\`bash
-# Ver logs del backend
-cd back && npm run dev
-
-# Ver logs del build
-node scripts/build-monorepo.js
-\`\`\`
-
-## 📄 Licencia
-
-MIT License - ver archivo LICENSE para más detalles.
