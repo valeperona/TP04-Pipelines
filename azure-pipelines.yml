@@ -1,0 +1,58 @@
+# azure-pipelines.yml
+# CI para monorepo con React (Vite) + Express
+# Corre en Self-Hosted Agent
+
+trigger:
+- main
+
+pool:
+  name: SelfHosted
+
+stages:
+- stage: CI
+  displayName: "Continuous Integration"
+  jobs:
+
+  # Build Frontend
+  - job: build_front
+    displayName: "Build Frontend"
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '20.x'
+      displayName: "Use Node.js 20"
+    - script: npm ci
+      workingDirectory: front
+      displayName: "Install dependencies (front)"
+    - script: npm run build
+      workingDirectory: front
+      displayName: "Build front (Vite)"
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: front/dist
+        ArtifactName: front-dist
+        publishLocation: Container
+      displayName: "Publish artifact: front-dist"
+
+  # Build Backend
+  - job: build_back
+    displayName: "Build Backend"
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '20.x'
+      displayName: "Use Node.js 20"
+    - script: npm ci
+      workingDirectory: back
+      displayName: "Install dependencies (back)"
+    # Si tenés un build step (ej: TypeScript):
+    - script: npm run build
+      workingDirectory: back
+      displayName: "Build backend"
+      condition: succeededOrFailed()
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: back
+        ArtifactName: back-dist
+        publishLocation: Container
+      displayName: "Publish artifact: back-dist"
